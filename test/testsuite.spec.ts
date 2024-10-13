@@ -5,13 +5,16 @@ import { CreateRoomPage } from './pages/createRoom-page';
 import { RoomsPage } from './pages/rooms-page';
 import { ClientsPage } from './pages/clients-page';
 import { CreateClientPage } from './pages/createClient-page';
+import { BillsPage } from './pages/bills-page';
+import { CreateBillPage } from './pages/createNewBill-page';
+
 
 
 
 test.describe('Test suite 01', () => {
 
   
-  test('Test Case 01, Title overview ', async ({ page }) => {
+  test('Test Case 1, Title overview ', async ({ page }) => {
     const loginPage = new LoginPage(page);
     await loginPage.goto();
     await loginPage.performLogin(`${process.env.TEST_USERNAME}`,`${process.env.TEST_PASSWORD}`);
@@ -25,7 +28,7 @@ test.describe('Test suite 01', () => {
 
 
 
-  test('Tase case 02, create client', async ({ page }) => {
+  test('Tase case 2, create client', async ({ page }) => {
     const loginPage = new LoginPage(page);
     await loginPage.goto();
     await loginPage.performLogin(`${process.env.TEST_USERNAME}`,`${process.env.TEST_PASSWORD}`);
@@ -34,12 +37,12 @@ test.describe('Test suite 01', () => {
 
     await dashboardPage.gotoClientsView();
     await page.locator("#app > div > h2 > a").click();
-    // await page.getByRole('link', { name: 'Create Client' }).click();
+    //*await page.getByRole('link', { name: 'Create Client' }).click(); *//
     await createClient.createClient();
 
   });
 
-  test('Tase Case 03 : Edit client and asserting', async ({ page }) => {
+  test('Tase Case 3 : Edit client and asserting', async ({ page }) => {
     const loginPage = new LoginPage(page);
     await loginPage.goto();
     await loginPage.performLogin(`${process.env.TEST_USERNAME}`,`${process.env.TEST_PASSWORD}`);
@@ -53,7 +56,23 @@ test.describe('Test suite 01', () => {
     await expect(clientsPage.page).toHaveURL(/.*clients/);
   });
 
-  test('Tase case 04, creating a new room and asserting', async ({ page }) => {
+  test('Tase case 4: delete an existing client and assert', async ({ page }) => {
+    const loginPage = new LoginPage(page);
+    await loginPage.goto();
+    await loginPage.performLogin(`${process.env.TEST_USERNAME}`,`${process.env.TEST_PASSWORD}`);
+    const dashboardPage = new DashboardPage(page);
+    const clientsPage = new ClientsPage(page);
+
+    await dashboardPage.gotoClientsView();
+    await clientsPage.deleteClient(0); 
+
+    const clientNameLocator = page.locator('text=Jonas Hellman'); 
+    await expect(clientNameLocator).toHaveCount(0);
+    
+  });
+
+
+  test('Tase case 5, creating a new room and asserting', async ({ page }) => {
     const loginPage = new LoginPage(page);
     await loginPage.goto();
     await loginPage.performLogin(`${process.env.TEST_USERNAME}`,`${process.env.TEST_PASSWORD}`);
@@ -67,9 +86,38 @@ test.describe('Test suite 01', () => {
     await expect(roomsPage.page).toHaveURL(/.*rooms/);
 
   });
+  test('Tase Case 6 : Edit room and asserting', async ({ page }) => {
+    const loginPage = new LoginPage(page);
+    await loginPage.goto();
+    await loginPage.performLogin(`${process.env.TEST_USERNAME}`,`${process.env.TEST_PASSWORD}`);
+  
+    const dashboardPage = new DashboardPage(page);
+    const roomsPage = new RoomsPage(page);
+
+    await dashboardPage.gotoRoomsView();
+    await roomsPage.gotoEditRoom(0);
+    await roomsPage.goBack();
+    await expect(roomsPage.page).toHaveURL(/.*rooms/);
+  });
 
 
 
+  test('Tase case 7, create bill page', async ({ page }) => {
+    const loginPage = new LoginPage(page);
+    await loginPage.goto();
+    await loginPage.performLogin(`${process.env.TEST_USERNAME}`,`${process.env.TEST_PASSWORD}`);
+    const dashboardPage = new DashboardPage(page);
+    const billsPage = new BillsPage(page);
+    const createBillPage = new CreateBillPage(page);
+  
+    await dashboardPage.gotoBillsView();
+    await billsPage.gotoCreateBill();
 
+    const randomCreateBill = await createBillPage.createBill();
+    const billRow = page.locator(`text=${randomCreateBill}`);
+    await expect(billRow).toBeVisible();
+
+
+  });
 
 });   
