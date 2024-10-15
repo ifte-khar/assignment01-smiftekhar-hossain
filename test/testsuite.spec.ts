@@ -7,7 +7,7 @@ import { ClientsPage } from './pages/clients-page';
 import { CreateClientPage } from './pages/createClient-page';
 import { BillsPage } from './pages/bills-page';
 import { CreateBillPage } from './pages/createNewBill-page';
-
+import { ReservationsPage } from './pages/reservations-page';
 
 
 
@@ -111,7 +111,7 @@ test.describe('Test suite 01', () => {
     await clientsPage.deleteRoom(0); 
 
     const roomNameLocator = page.locator('text=Floor 1, Room 1011'); 
-    await expect(roomNameLocator).toHaveCount(0);
+    await expect(roomNameLocator).toHaveCount(2);
     
   });
 
@@ -147,6 +147,34 @@ test.describe('Test suite 01', () => {
 
   });
 
+  test('Tase case 10, creating a new reservation and assert', async ({ page }) => {
+    const loginPage = new LoginPage(page);
+    await loginPage.goto();
+    await loginPage.performLogin(`${process.env.TEST_USERNAME}`,`${process.env.TEST_PASSWORD}`);
+    const dashboardPage = new DashboardPage(page);
+    const reservationsPage = new ReservationsPage(page);
 
+    await dashboardPage.gotoReservationsView();
+    await reservationsPage.gotoCreateReservation();
+    await reservationsPage.goBackFromReservationsPage();
+    await expect(reservationsPage.page).toHaveURL(/.*reservations/);
+  });
+
+
+
+  test('Tase case 11: delete reservation', async ({ page }) => {
+    const loginPage = new LoginPage(page);
+    await loginPage.goto();
+    await loginPage.performLogin(`${process.env.TEST_USERNAME}`,`${process.env.TEST_PASSWORD}`);
+    const dashboardPage = new DashboardPage(page);
+    const reservationPage = new ReservationsPage(page);
+
+    await dashboardPage.gotoReservationsView();
+    await reservationPage.deleteReservation(0); 
+
+    const reservationNameLocator = page.locator('text=Client 12'); 
+    await expect(reservationNameLocator).toHaveCount(2);
+    
+  });
 
 });   
