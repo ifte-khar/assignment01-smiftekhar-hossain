@@ -1,15 +1,7 @@
 import { expect, type Locator, type Page } from '@playwright/test';
 
 export class ReservationsPage {
-    goBack() {
-      throw new Error('Method not implemented.');
-    }
-    //goBack() {
-      //throw new Error('Method not implemented.');
-    //}
-    //gotoEditReservations(arg0: number) {
-      //throw new Error('Method not implemented.');//
-    //}
+
     readonly page: Page;
     readonly pageHeading: Locator;
     readonly createReservationButton: Locator;
@@ -17,6 +9,7 @@ export class ReservationsPage {
     readonly editReservationOption: Locator;
     readonly deleteReservationOption: Locator;
     readonly backButton: Locator;
+
   
     constructor(page: Page) {
         this.page = page;
@@ -27,14 +20,10 @@ export class ReservationsPage {
         this.deleteReservationOption = page.getByText('Delete');
         this.backButton = page.getByRole('link', { name: 'Back' });
     }
+    
 
     async gotoCreateReservation() {
         await this.createReservationButton.click();
-    }
-
-    async editReservation(index: number){
-        await this.resevationOptionButton.nth(index).click();
-        await this.editReservationOption.click();
     }
 
     async deleteReservation(index: number){
