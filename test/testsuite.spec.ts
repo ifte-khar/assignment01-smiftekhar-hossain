@@ -100,9 +100,23 @@ test.describe('Test suite 01', () => {
     await expect(roomsPage.page).toHaveURL(/.*rooms/);
   });
 
+  test('Tase case 7: delete room', async ({ page }) => {
+    const loginPage = new LoginPage(page);
+    await loginPage.goto();
+    await loginPage.performLogin(`${process.env.TEST_USERNAME}`,`${process.env.TEST_PASSWORD}`);
+    const dashboardPage = new DashboardPage(page);
+    const clientsPage = new RoomsPage(page);
+
+    await dashboardPage.gotoRoomsView();
+    await clientsPage.deleteRoom(0); 
+
+    const roomNameLocator = page.locator('text=Floor 1, Room 1011'); 
+    await expect(roomNameLocator).toHaveCount(0);
+    
+  });
 
 
-  test('Tase case 7, create bill page', async ({ page }) => {
+  test('Tase case 8, create bill page', async ({ page }) => {
     const loginPage = new LoginPage(page);
     await loginPage.goto();
     await loginPage.performLogin(`${process.env.TEST_USERNAME}`,`${process.env.TEST_PASSWORD}`);
@@ -119,5 +133,20 @@ test.describe('Test suite 01', () => {
 
 
   });
+   
+  test('Tase case 09, edit en old bill and assert the update', async ({ page }) => {
+    const loginPage = new LoginPage(page);
+    await loginPage.goto();
+    await loginPage.performLogin(`${process.env.TEST_USERNAME}`,`${process.env.TEST_PASSWORD}`);
+    const dashboardPage = new DashboardPage(page);
+    const billsPage = new BillsPage(page);
+
+    await dashboardPage.gotoBillsView();
+    await billsPage.gotoEditBill(0);
+    await expect(billsPage.page).toHaveURL(/.*bill/); 
+
+  });
+
+
 
 });   
